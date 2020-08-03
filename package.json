@@ -1,0 +1,32 @@
+{
+  "name": "noaa-gfs4",
+  "version": "1.0.0",
+  "description": "NOAA-GFS4 GEOOS Downloader",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --watch ./lib --watch ./index.js --inspect=0.0.0.0:9230 --nolazy ./index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geoos/noaa-gfs4.git"
+  },
+  "keywords": [
+    "geoos",
+    "noaa",
+    "gfs4"
+  ],
+  "author": "Jota",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geoos/noaa-gfs4/issues"
+  },
+  "homepage": "https://github.com/geoos/noaa-gfs4#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "moment-timezone": "^0.5.31"
+  }
+}
