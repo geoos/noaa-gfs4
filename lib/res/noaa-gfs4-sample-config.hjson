@@ -1,0 +1,30 @@
+{
+    #
+    # Raster config file
+    #
+    # Importer config
+    deleteFinishedFiles: false
+
+    # Clipping boundaries
+    limits:{
+        w:-130.0, e:-20.0,
+        s:-75.0, n:30.0
+    }
+
+    variables:{
+        TMP_0:{
+            selector:{GRIB_ELEMENT:"TMP", GRIB_SHORT_NAME:"0-SFC"}
+            name:Temperature at Ground or Sea Level
+            unit: ºC
+        }
+        TMP_2:{
+            selector:{GRIB_ELEMENT:"TMP"}
+            levels:{
+                attribute:GRIB_SHORT_NAME
+                values:["2-HTGL"]
+            }
+            name:Temperature at 2[m] above Ground or Sea Level
+            unit: ºC
+        }
+    }
+}
