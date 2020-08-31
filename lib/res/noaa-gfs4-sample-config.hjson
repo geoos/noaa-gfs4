@@ -1,30 +1,238 @@
 {
+    dataSet: {type: "raster", format:"grib2"}
     #
     # Raster config file
     #
     # Importer config
+    # Fnished files can be deleted or moved to /home/data/finished
     deleteFinishedFiles: false
 
+    # Temporality associaed to each imported file. 
+    # All time values in dataSets are UTC
+    # Depending on temporality, imported files must follow a name rule to incorporate the date and time
+    # 1,2,3,4,6,12 hours: ${dataSet-code}_YYYY-MM-DD_HH-mm
+    # 1 day: ${dataSet-code}_YYYY-MM-DD
+    # 1 month ${dataSet-code}_YYYY-MM
+    # 1 year ${dataSet-code}_YYYY
+    # none (non temporary data): ${dataSet-code}
+    # fixed (fixed-period): TODO
+    temporality:{
+        value: 3, unit:hours
+        # How to interpret mark time in file: start / middle / end of period.
+        # Used to pick a file for timed queries
+        searchCriteria: middle
+    }
+
     # Clipping boundaries
-    limits:{
+    clippingArea:{
         w:-130.0, e:-20.0,
         s:-75.0, n:30.0
     }
 
+    #Grid Query Config
+    grid:{
+        maxWidth:   150
+        maxHeight:  150
+        # gdal_translate resamplig algorithm
+        # nearest (default),bilinear,cubic,cubicspline,lanczos,average,mode
+        resampling: nearest 
+    }
+    #VectorsGrid Query Config
+    vectorsGrid:{
+        maxWidth:   60
+        maxHeight:  60
+        # gdal_translate resamplig algorithm
+        # nearest (default),bilinear,cubic,cubicspline,lanczos,average,mode
+        resampling: bilinear 
+    }
+    #Contour Query Config
+    contour:{
+        maxWidth:   150
+        maxHeight:  150
+        # gdal_translate resamplig algorithm
+        # nearest (default),bilinear,cubic,cubicspline,lanczos,average,mode
+        resampling: nearest 
+    }
+
+    # Apply to All Variables in dataSet
+    # can be extended in variables definition
+    variablesDefaults:{
+        # How many periods (value, unit) should be used to search (before and ahead) if no file is found for specific time
+        searchTolerance: 0
+        options:{
+            decimals:2
+        }
+    }
+
+    # selectors for variables and it levels can use band and band metadata attributes
     variables:{
         TMP_0:{
             selector:{GRIB_ELEMENT:"TMP", GRIB_SHORT_NAME:"0-SFC"}
             name:Temperature at Ground or Sea Level
             unit: ºC
+            ## numpy transformation over variable Z
+            ## transform: "Z * 10000"
+            ## Overwrite searchTolerance
+            ## searchTolerance: 2
         }
         TMP_2:{
+            selector:{GRIB_ELEMENT:"TMP", GRIB_SHORT_NAME:"2-HTGL"}
+            name:Temperature at 2[m] above Ground or Sea Level
+            unit: ºC
+        }
+        TMP_HP: {
             selector:{GRIB_ELEMENT:"TMP"}
             levels:{
                 attribute:GRIB_SHORT_NAME
-                values:["2-HTGL"]
+                values:["100000-ISBL", "85000-ISBL", "70000-ISBL", "50000-ISBL" ,"30000-ISBL"]
+                descriptions:["1000 [hPa]", "850 [hPa]", "700 [hPa]", "500 [hPa]", "300 [hPa]"]                
             }
-            name:Temperature at 2[m] above Ground or Sea Level
+            name:Temperature by Pressure Level
             unit: ºC
+        }
+        VIS:{
+            selector:{GRIB_ELEMENT:"VIS", GRIB_SHORT_NAME:"0-SFC"}
+            name:Visibility at Surface Level
+            unit: ºC
+        }
+        LAND:{
+            selector:{GRIB_ELEMENT:"LAND", GRIB_SHORT_NAME:"0-SFC"}
+            name:Land Proportion
+            unit: ºC
+        }
+        HGT: {
+            selector:{GRIB_ELEMENT:"HGT"}
+            levels:{
+                attribute:GRIB_SHORT_NAME
+                values:["100000-ISBL", "85000-ISBL", "70000-ISBL", "50000-ISBL" ,"30000-ISBL"]
+                descriptions:["1000 [hPa]", "850 [hPa]", "700 [hPa]", "500 [hPa]", "300 [hPa]"]                
+            }
+            name: Geopotential Height
+            unit: gpm
+        }
+        TCDC:{
+            selector:{GRIB_ELEMENT:"TCDC"}
+            levels:{
+                attribute:GRIB_SHORT_NAME
+                values:["0-LCY", "0-MCY", "0-HCY"]
+                descriptions:["Low Cloud Level", "Middle Cloud Level", "High Cloud Level"]                
+            }
+            name: Total Cloud Cover
+            unit: %
+        }
+        TCDC_ALL:{
+            selector:{GRIB_ELEMENT:"TCDC", GRIB_SHORT_NAME:"0-EATM"}
+            name: Total Cloud Cover - Entire Atmosphere
+            unit: gpm
+        }
+        WND_10M_U:{
+            selector:{GRIB_ELEMENT:"UGRD", GRIB_SHORT_NAME:"10-HTGL"}
+            name:Wind (10 m) - U Component
+            unit: m/s
+            options:{hidden:true}
+        }
+        WND_10M_V:{
+            selector:{GRIB_ELEMENT:"VGRD", GRIB_SHORT_NAME:"10-HTGL"}
+            name:Wind (10 m) - V Component
+            unit: m/s
+            options:{hidden:true}
+        }
+        WND_10M:{
+            calculated:{
+                U:WND_10M_U
+                V:WND_10M_V
+                formula:"sqrt(U*U + V*V)"
+            }
+            vector:{uComponent:"WND_10M_U", vComponent:"WND_10M_V"}
+            name:Wind (10 m)
+            unit: m/s            
+        }
+        ABSV: {
+            selector:{GRIB_ELEMENT:"ABSV"}
+            levels:{
+                attribute:GRIB_SHORT_NAME
+                values:["100000-ISBL", "85000-ISBL", "70000-ISBL", "50000-ISBL" ,"30000-ISBL"]
+                descriptions:["1000 [hPa]", "850 [hPa]", "700 [hPa]", "500 [hPa]", "300 [hPa]"]                
+            }
+            name: Absolute Vorticity
+            unit: "1/s"
+        }
+        TOZNE: {
+            selector:{GRIB_ELEMENT:"TOZNE"}
+            name:Total Ozone
+            unit: Dobson
+        }
+        DPT: {
+            selector:{GRIB_ELEMENT:"DPT"}
+            name:Dew Point Temperature
+            unit: ºC
+        }
+        RH: {
+            selector:{GRIB_ELEMENT:"RH", GRIB_SHORT_NAME:"2-HTGL"}
+            name:Relative Humidity (2m)
+            unit: %
+        }
+        TMAX: {
+            selector:{GRIB_ELEMENT:"TMAX"}
+            name: Maximum Temperature
+            unit: ºC
+        }
+        TMIN: {
+            selector:{GRIB_ELEMENT:"TMIN"}
+            name: Minimum Temperature
+            unit: ºC
+        }
+        PRATE: {
+            selector:{GRIB_ELEMENT:"PRATE", GRIB_PDS_PDTN:"0"}
+            name: Precipitation Rate
+            unit: kg/(m^2 s)
+        }
+        APCP01: {
+            selector:{GRIB_ELEMENT:"APCP01", GRIB_SHORT_NAME:"0-SFC"}
+            name: Total Precipitation (1h)
+            unit: kg/(m^2)
+        }
+        CAPE: {
+            selector:{GRIB_ELEMENT:"CAPE", GRIB_SHORT_NAME:"0-SFC"}
+            name: Convective Available Potential Energy (Surface)
+            unit: J/kg
+        }
+        CIN: {
+            selector:{GRIB_ELEMENT:"CIN", GRIB_SHORT_NAME:"0-SFC"}
+            name: Convective Inhibition (Surface)
+            unit: J/kg
+        }
+        ICEC: {
+            selector:{GRIB_ELEMENT:"ICEC"}
+            name: Ice Cover
+            unit: Proportion
+        }
+        ALBDO: {
+            selector:{GRIB_ELEMENT:"ALBDO"}
+            name: Albedo
+            unit: %
+        }
+        TSOIL: {
+            selector:{GRIB_ELEMENT:"TSOIL"}
+            name: Soil temperature
+            unit: ºC
+            levels:{
+                attribute:GRIB_SHORT_NAME
+                values:["0-0.1-DBLL", "0.1-0.4-DBLL", "0.4-1-DBLL", "1-2-DBLL"]
+                descriptions:["0-0.1[m] Deep Below Land Surface", "0.1-0.4[m] Deep Below Land Surface", "0.4-1[m] Deep Below Land Surface", "1-2[m] Deep Below Land Surface"]
+            }
+        }
+        PRES: {
+            selector:{GRIB_ELEMENT:"PRES", GRIB_SHORT_NAME:"0-SFC"}
+            name: Pressure (Ground or Water Surface)
+            unit: hPa
+            transform: "Z / 100"
+        }
+        PRMSL: {
+            selector:{GRIB_ELEMENT:"PRMSL"}
+            name: Pressure (Mean Sea Level)
+            unit: hPa
+            transform: "Z / 100"
         }
     }
 }
