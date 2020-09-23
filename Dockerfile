@@ -1,7 +1,7 @@
-# docker build -t geoos/noaa-gfs4:latest -t geoos/noaa-gfs4:0.80 .
-# docker push geoos/noaa-gfs4:latest
+# docker build -t docker.homejota.net/geoos/noaa-gfs4:latest -t docker.homejota.net/geoos/noaa-gfs4:0.81 .
+# docker push docker.homejota.net/geoos/noaa-gfs4:latest
 
-FROM geoos/node14-python3
+FROM docker.homejota.net/geoos/node14-python3
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --production
