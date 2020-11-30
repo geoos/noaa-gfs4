@@ -1,4 +1,4 @@
-# docker build -t docker.homejota.net/geoos/noaa-gfs4:latest -t docker.homejota.net/geoos/noaa-gfs4:0.81 .
+# docker build -t docker.homejota.net/geoos/noaa-gfs4:latest -t docker.homejota.net/geoos/noaa-gfs4:0.84 .
 # docker push docker.homejota.net/geoos/noaa-gfs4:latest
 
 FROM docker.homejota.net/geoos/node14-python3
