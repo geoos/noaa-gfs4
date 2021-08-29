@@ -2,4 +2,4 @@ const log = require("./lib/Logs")
 const downloader = require("./lib/Downloader")
 
 downloader.init();
-log.info("NOAA-GFS4 [0.91] downloader initialized");
+log.info("NOAA-GFS4 [0.96] downloader initialized");
