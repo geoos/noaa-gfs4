@@ -1,4 +1,4 @@
-# docker buildx build --push --platform linux/amd64,linux/arm64 -t docker.homejota.net/geoos/noaa-gfs4:latest -t docker.homejota.net/geoos/noaa-gfs4:0.97 .
+# docker buildx build --push --platform linux/amd64,linux/arm64 -t docker.homejota.net/geoos/noaa-gfs4:latest -t docker.homejota.net/geoos/noaa-gfs4:1.00 .
 #
 # docker build -t docker.homejota.net/geoos/noaa-gfs4:latest -t docker.homejota.net/geoos/noaa-gfs4:0.89 .
 # docker push docker.homejota.net/geoos/noaa-gfs4:latest
