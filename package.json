@@ -27,6 +27,6 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
-    "moment-timezone": "^0.5.31"
+    "moment-timezone": "^0.5.35"
   }
 }
