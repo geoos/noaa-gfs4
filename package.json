@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/geoos/noaa-gfs4#readme",
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.22"
   },
   "dependencies": {
     "moment-timezone": "^0.5.31"
